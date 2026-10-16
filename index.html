@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniCalc Pro - Universal Calculator & Converter Suite</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- PWA Web App Manifest (Inline base64 string for seamless deployment) -->
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk9tbmlDYWxjIFBybyAtIFVuaXZlcnNhbCBDYWxjdWxhdG9yIiwKICAic2hvcnRfbmFtZSI6ICJPbW5pQ2FsYyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYxNzJhIiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIsCiAgImljb25zIjogW10KfQ==">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.7);
+    }
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-button {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-button:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .glass-button:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .glass-input {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .glass-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.35);
+    }
+
+    /* Keypad Touch Behavior */
+    .calc-btn {
+      touch-action: manipulation;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+  <!-- Ambient Animated Background Orbs -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl animate-blob"></div>
+    <div class="absolute top-1/2 -right-40 w-96 h-96 bg-purple-600/25 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+  </div>
+
+  <div class="relative z-10 flex flex-col min-h-screen">
+    
+    <!-- Top Bar Navigation -->
+    <header class="glass-panel sticky top-0 z-50 px-4 py-3 sm:px-8 border-b border-white/10 shadow-lg">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <i class="fa-solid fa-calculator text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="font-outfit text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-indigo-200 to-pink-300 bg-clip-text text-transparent">
+              OmniCalc <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 ml-1 font-semibold">PRO</span>
+            </h1>
+            <p class="text-xs text-slate-400 hidden sm:block">Universal Utility Suite for Daily Math, Finance & Health</p>
+          </div>
+        </div>
+
+        <!-- Controls / Actions -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <button id="soundToggleBtn" onclick="toggleSound()" class="glass-button p-2.5 rounded-xl text-slate-300 hover:text-white" title="Toggle Sound Feedback">
+            <i id="soundIcon" class="fa-solid fa-volume-high text-indigo-400"></i>
+          </button>
+          <button onclick="openHistoryModal()" class="glass-button p-2.5 rounded-xl text-slate-300 hover:text-white" title="View Calculation History">
+            <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
+          </button>
+          <button onclick="toggleModal('infoModal')" class="glass-button p-2.5 rounded-xl text-slate-300 hover:text-white" title="About & Play Store Setup">
+            <i class="fa-solid fa-circle-info text-pink-400"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top Banner Ad Placeholder (Ready for AdSense / AdMob Banner) -->
+    <div class="max-w-7xl w-full mx-auto px-3 pt-3">
+      <div id="ad-container-top" class="w-full glass-card border border-indigo-500/20 rounded-xl py-2 px-4 text-center text-xs text-slate-400 flex items-center justify-center space-x-2">
+        <span class="bg-amber-500/20 text-amber-300 text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border border-amber-500/30">Ad Space</span>
+        <span>Monetization Slot: Ready for Google AdSense / AdMob Banner Code</span>
+      </div>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 flex flex-col items-center justify-start">
+      
+      <!-- Primary Module Selector Tabs -->
+      <nav class="w-full glass-panel p-1.5 rounded-2xl mb-6 shadow-xl overflow-x-auto no-scrollbar">
+        <div class="flex space-x-1 sm:space-x-2 min-w-max">
+          <button onclick="switchTab('standard')" id="tab-standard" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Standard Math</span>
+          </button>
+          <button onclick="switchTab('financial')" id="tab-financial" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-white/5">
+            <i class="fa-solid fa-sack-dollar text-emerald-400
